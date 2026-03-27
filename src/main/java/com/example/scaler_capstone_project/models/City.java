@@ -4,11 +4,13 @@ package com.example.scaler_capstone_project.models;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
 @Data
 @Entity
+@EqualsAndHashCode(callSuper = true)
 public class City extends BaseModel{
     private String name;
     @OneToMany(mappedBy = "city")
