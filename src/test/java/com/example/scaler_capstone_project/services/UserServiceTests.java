@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,6 +25,9 @@ public class UserServiceTests {
 
     @Mock
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Mock
+    private JwtUtil jwtUtil;
 
     @InjectMocks
     private UserService userService;
@@ -79,5 +83,54 @@ public class UserServiceTests {
         verify(userRepository, times(1)).findByEmail("existing@example.com");
         verify(bCryptPasswordEncoder, never()).encode(anyString());
         verify(userRepository, never()).save(any(User.class));
+    }
+
+    @Test
+    void testLogin_Success() {
+        // Arrange
+        when(userRepository.findByEmail("existing@example.com")).thenReturn(Optional.of(existingUser));
+        when(bCryptPasswordEncoder.matches("password123", "encodedPassword")).thenReturn(true);
+        when(jwtUtil.generateToken("existing@example.com")).thenReturn("mocked-jwt-token");
+
+        // Act
+        Map<String, Object> result = userService.login("existing@example.com", "password123");
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(existingUser, result.get("user"));
+        assertEquals("mocked-jwt-token", result.get("token"));
+
+        verify(userRepository, times(1)).findByEmail("existing@example.com");
+        verify(bCryptPasswordEncoder, times(1)).matches("password123", "encodedPassword");
+        verify(jwtUtil, times(1)).generateToken("existing@example.com");
+    }
+
+    @Test
+    void testLogin_UserNotFound() {
+        // Arrange
+        when(userRepository.findByEmail("nonexistent@example.com")).thenReturn(Optional.empty());
+
+        // Act & Assert
+        RuntimeException exception = assertThrows(RuntimeException.class,
+            () -> userService.login("nonexistent@example.com", "password123"));
+        assertEquals("User with email nonexistent@example.com not found", exception.getMessage());
+
+        verify(userRepository, times(1)).findByEmail("nonexistent@example.com");
+        verify(bCryptPasswordEncoder, never()).matches(anyString(), anyString());
+    }
+
+    @Test
+    void testLogin_InvalidPassword() {
+        // Arrange
+        when(userRepository.findByEmail("existing@example.com")).thenReturn(Optional.of(existingUser));
+        when(bCryptPasswordEncoder.matches("wrongpassword", "encodedPassword")).thenReturn(false);
+
+        // Act & Assert
+        RuntimeException exception = assertThrows(RuntimeException.class,
+            () -> userService.login("existing@example.com", "wrongpassword"));
+        assertEquals("Invalid password", exception.getMessage());
+
+        verify(userRepository, times(1)).findByEmail("existing@example.com");
+        verify(bCryptPasswordEncoder, times(1)).matches("wrongpassword", "encodedPassword");
     }
 }
