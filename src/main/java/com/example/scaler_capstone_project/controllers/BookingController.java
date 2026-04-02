@@ -22,7 +22,7 @@ public class BookingController {
     private JwtUtil jwtUtil;
 
     @PostMapping("/book")
-    public BookingResponseDTO bookMovie(@RequestBody BookingRequestDTO bookingMovieRequestDTO, 
+    public BookingResponseDTO bookMovie(@RequestBody BookingRequestDTO bookingMovieRequestDTO,
                                         @RequestHeader(value = "Authorization", required = false) String token){
         BookingResponseDTO bookingMovieResponseDTO = new BookingResponseDTO();
 

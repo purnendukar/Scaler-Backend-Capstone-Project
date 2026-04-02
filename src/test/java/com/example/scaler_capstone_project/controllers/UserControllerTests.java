@@ -1,18 +1,16 @@
 package com.example.scaler_capstone_project.controllers;
 
 import com.example.scaler_capstone_project.dtos.LoginRequestDTO;
-import com.example.scaler_capstone_project.dtos.LoginResponseDTO;
 import com.example.scaler_capstone_project.dtos.SignUpRequestDTO;
-import com.example.scaler_capstone_project.dtos.SignUpResponseDTO;
 import com.example.scaler_capstone_project.models.User;
 import com.example.scaler_capstone_project.services.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import tools.jackson.databind.ObjectMapper;
 
 import java.util.Map;
 
@@ -27,14 +25,14 @@ public class UserControllerTests {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockitoBean
+    @MockBean
     private UserService userService;
 
     @Autowired
     private ObjectMapper objectMapper;
 
     @Test
-    void testSignup_Success() throws Exception {
+    void testSignupSuccess() throws Exception {
         // Arrange
         SignUpRequestDTO requestDTO = new SignUpRequestDTO();
         requestDTO.setName("New User");
@@ -60,7 +58,7 @@ public class UserControllerTests {
     }
 
     @Test
-    void testSignup_Failure() throws Exception {
+    void testSignupFailure() throws Exception {
         // Arrange
         SignUpRequestDTO requestDTO = new SignUpRequestDTO();
         requestDTO.setName("Existing User");
@@ -76,11 +74,11 @@ public class UserControllerTests {
                 .content(objectMapper.writeValueAsString(requestDTO)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.responseStatus").value("FAILURE"))
-                .andExpect(jsonPath("$.user").doesNotExist());
+                .andExpect(jsonPath("$.user").value(null));
     }
 
     @Test
-    void testLogin_Success() throws Exception {
+    void testLoginSuccess() throws Exception {
         // Arrange
         LoginRequestDTO requestDTO = new LoginRequestDTO();
         requestDTO.setEmail("existing@example.com");
@@ -108,7 +106,7 @@ public class UserControllerTests {
     }
 
     @Test
-    void testLogin_Failure() throws Exception {
+    void testLoginFailure() throws Exception {
         // Arrange
         LoginRequestDTO requestDTO = new LoginRequestDTO();
         requestDTO.setEmail("nonexistent@example.com");
@@ -123,6 +121,7 @@ public class UserControllerTests {
                 .content(objectMapper.writeValueAsString(requestDTO)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.responseStatus").value("FAILURE"))
-                .andExpect(jsonPath("$.user").doesNotExist());
+                .andExpect(jsonPath("$.user").value(null))
+                .andExpect(jsonPath("$.token").value(null));
     }
 }

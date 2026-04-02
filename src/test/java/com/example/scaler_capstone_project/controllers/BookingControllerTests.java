@@ -1,17 +1,15 @@
 package com.example.scaler_capstone_project.controllers;
 
 import com.example.scaler_capstone_project.dtos.BookingRequestDTO;
-import com.example.scaler_capstone_project.dtos.BookingResponseDTO;
-import com.example.scaler_capstone_project.dtos.ResponseStatus;
 import com.example.scaler_capstone_project.models.Ticket;
 import com.example.scaler_capstone_project.services.IBookingService;
 import com.example.scaler_capstone_project.services.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
@@ -28,17 +26,17 @@ public class BookingControllerTests {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockitoBean
+    @MockBean
     private IBookingService bookingService;
 
-    @MockitoBean
+    @MockBean
     private JwtUtil jwtUtil;
 
     @Autowired
     private ObjectMapper objectMapper;
 
     @Test
-    void testBookMovie_Success() throws Exception {
+    void testBookMovieSuccess() throws Exception {
         // Arrange
         BookingRequestDTO requestDTO = new BookingRequestDTO();
         requestDTO.setUserId(1L);
@@ -66,7 +64,7 @@ public class BookingControllerTests {
     }
 
     @Test
-    void testBookMovie_MissingToken() throws Exception {
+    void testBookMovieMissingToken() throws Exception {
         // Arrange
         BookingRequestDTO requestDTO = new BookingRequestDTO();
         requestDTO.setUserId(1L);
@@ -83,7 +81,7 @@ public class BookingControllerTests {
     }
 
     @Test
-    void testBookMovie_InvalidToken() throws Exception {
+    void testBookMovieInvalidToken() throws Exception {
         // Arrange
         BookingRequestDTO requestDTO = new BookingRequestDTO();
         requestDTO.setUserId(1L);
@@ -105,7 +103,7 @@ public class BookingControllerTests {
     }
 
     @Test
-    void testBookMovie_Failure() throws Exception {
+    void testBookMovieFailure() throws Exception {
         // Arrange
         BookingRequestDTO requestDTO = new BookingRequestDTO();
         requestDTO.setUserId(1L);
