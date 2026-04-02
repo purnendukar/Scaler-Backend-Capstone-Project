@@ -45,4 +45,23 @@ public class JwtUtil {
     public boolean validateToken(String token, String email) {
         return (email.equals(extractEmail(token)) && !isTokenExpired(token));
     }
+
+    public boolean validateToken(String token) {
+        try {
+            if (token == null || token.isEmpty()) {
+                return false;
+            }
+            // Remove "Bearer " prefix if present
+            if (token.startsWith("Bearer ")) {
+                token = token.substring(7);
+            }
+            Jwts.parserBuilder()
+                    .setSigningKey(SECRET_KEY)
+                    .build()
+                    .parseClaimsJws(token);
+            return !isTokenExpired(token);
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }
