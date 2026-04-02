@@ -7,4 +7,5 @@ import lombok.Data;
 public class LoginResponseDTO {
     private User user;
     private ResponseStatus responseStatus;
+    private String token;
 }
