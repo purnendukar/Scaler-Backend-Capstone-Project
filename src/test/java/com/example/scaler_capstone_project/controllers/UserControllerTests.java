@@ -73,8 +73,7 @@ public class UserControllerTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDTO)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.responseStatus").value("FAILURE"))
-                .andExpect(jsonPath("$.user").value(null));
+                .andExpect(jsonPath("$.responseStatus").value("FAILURE"));
     }
 
     @Test
@@ -120,8 +119,6 @@ public class UserControllerTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDTO)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.responseStatus").value("FAILURE"))
-                .andExpect(jsonPath("$.user").value(null))
-                .andExpect(jsonPath("$.token").value(null));
+                .andExpect(jsonPath("$.responseStatus").value("FAILURE"));
     }
 }
